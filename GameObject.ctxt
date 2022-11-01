@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=GameObject
+comment1.params=width\ height
+comment1.target=GameObject(int,\ int)
+comment2.params=image
+comment2.target=GameObject(java.lang.String)
+comment3.params=image
+comment3.target=GameObject(greenfoot.GreenfootImage)
+comment4.params=
+comment4.target=void\ debug()
+comment5.params=width\ height
+comment5.target=void\ debug(int,\ int)
+numComments=6

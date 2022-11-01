@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=TransposableObject
+comment1.params=width\ height
+comment1.target=TransposableObject(int,\ int)
+comment2.params=image
+comment2.target=TransposableObject(java.lang.String)
+comment3.params=image
+comment3.target=TransposableObject(greenfoot.GreenfootImage)
+numComments=4

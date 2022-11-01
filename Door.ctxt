@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Door
+comment1.params=width\ height
+comment1.target=Door(int,\ int)
+comment2.params=image
+comment2.target=Door(java.lang.String)
+comment3.params=image
+comment3.target=Door(greenfoot.GreenfootImage)
+numComments=4

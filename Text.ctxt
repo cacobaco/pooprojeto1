@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=Text
+comment1.params=width\ height\ text\ font\ size
+comment1.target=Text(int,\ int,\ java.lang.String,\ java.lang.String,\ int)
+comment2.params=width\ height\ text\ color\ font\ size
+comment2.target=Text(int,\ int,\ java.lang.String,\ greenfoot.Color,\ java.lang.String,\ int)
+comment3.params=width\ height\ text\ color\ font\ bold\ italic\ size
+comment3.target=Text(int,\ int,\ java.lang.String,\ greenfoot.Color,\ java.lang.String,\ boolean,\ boolean,\ int)
+comment4.params=
+comment4.target=java.lang.String\ getText()
+comment5.params=
+comment5.target=greenfoot.Color\ getColor()
+comment6.params=
+comment6.target=greenfoot.Font\ getFont()
+numComments=7

@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=SwitchWorldAnimation
+comment1.params=width\ height\ fade
+comment1.target=SwitchWorldAnimation(int,\ int,\ boolean)
+comment10.params=
+comment10.target=boolean\ hasEnded()
+comment2.params=width\ height\ fade\ color
+comment2.target=SwitchWorldAnimation(int,\ int,\ boolean,\ greenfoot.Color)
+comment3.params=
+comment3.target=void\ act()
+comment4.params=
+comment4.target=void\ update()
+comment5.params=
+comment5.target=boolean\ getFade()
+comment6.params=
+comment6.target=greenfoot.Color\ getColor()
+comment7.params=transparency
+comment7.target=void\ setTransparency(int)
+comment8.params=
+comment8.target=int\ getTransparency()
+comment9.params=ended
+comment9.target=void\ setEnded(boolean)
+numComments=11
