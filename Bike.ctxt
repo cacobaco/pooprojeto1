@@ -2,4 +2,10 @@
 comment0.target=Bike
 comment1.params=
 comment1.target=Bike()
-numComments=2
+comment2.params=width\ height
+comment2.target=Bike(int,\ int)
+comment3.params=image
+comment3.target=Bike(java.lang.String)
+comment4.params=image
+comment4.target=Bike(greenfoot.GreenfootImage)
+numComments=5

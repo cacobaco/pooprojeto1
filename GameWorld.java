@@ -4,15 +4,12 @@ public abstract class GameWorld extends World {
     
     private SwitchWorldAnimation joinAnimation; // when joining this level
     private SwitchWorldAnimation leaveAnimation; // when leaving this level
-    private boolean blockMovement; // used in Player to block movement and interactions
     private Player player1;
     private Player player2;
-    private LifeHeart[] lifePlayer1; // player 1 life
-    private LifeHeart[] lifePlayer2; // player 2 life
     
     public GameWorld(int width, int height) {
         super(width, height, 1);
-        setPaintOrder(SwitchWorldAnimation.class, LifeHeart.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, Player.class, GameObject.class);
     }
 
     // adds default join animation, if one is active replaces
@@ -57,21 +54,11 @@ public abstract class GameWorld extends World {
         leaveAnimation = null;
     }
 
-    // blocks movement
-    public void blockMovement() {
-        blockMovement = true;
-    }
-
-    // unblocks movement
-    public void unblockMovement() {
-        blockMovement = false;
-    }
-
     // spawns a fresh player 1 at a given x and y, if one is spawned replaces
     public void spawnPlayer1(int x, int y) {
         if (player1 != null) despawnPlayer1();
 
-        String[] controls = {"w", "a", "s", "d", "e"};
+        String[] controls = {"w", "a", "s", "d", "e", "f"};
         
         GreenfootImage[] images = {
             new GreenfootImage("boneco_red/w1.png"),
@@ -119,7 +106,7 @@ public abstract class GameWorld extends World {
     public void spawnPlayer2(int x, int y) {
         if (player2 != null) despawnPlayer2();
 
-        String[] controls = {"i", "j", "k", "l", "u"};
+        String[] controls = {"i", "j", "k", "l", "u", "h"};
         
         GreenfootImage[] images = {
             new GreenfootImage("boneco_purple/w1.png"),
@@ -163,50 +150,16 @@ public abstract class GameWorld extends World {
         player2 = null;
     }
 
-    // adds life bar from player 1, if he's spawned, if life is already added replaces
-    public void addLifePlayer1() {
-        if (lifePlayer1 != null) removeLifePlayer1();
-        if (player1 == null) return;
-
-        lifePlayer1 = new LifeHeart[player1.getLife()];
-        
-        for (int i = 0; i < player1.getLife(); i++) {
-            LifeHeart heart = new LifeHeart();
-            lifePlayer1[i] = heart;
-            addObject(heart, i * 45 + 30, 30);
-        }
+    // freezes both players
+    public void freezePlayers() {
+        if (player1 != null) player1.freeze();
+        if (player2 != null) player2.freeze();
     }
 
-    // removes life bar from player 1, if added
-    public void removeLifePlayer1() {
-        if (lifePlayer1 == null) return;
-        for (LifeHeart heart : lifePlayer1) {
-            removeObject(heart);
-        }
-        lifePlayer1 = null;
-    }
-
-    // adds life bar from player 2, if he's spawned, if life is already added replaces
-    public void addLifePlayer2() {
-        if (lifePlayer2 != null) removeLifePlayer2();
-        if (player2 == null) return;
-
-        lifePlayer2 = new LifeHeart[player2.getLife()];
-        
-        for (int i = 0; i < player2.getLife(); i++) {
-            LifeHeart heart = new LifeHeart();
-            lifePlayer2[i] = heart;
-            addObject(heart, getWidth() - i * 45 - 30, 30);
-        }
-    }
-
-    // removes life bar from player 2, if added
-    public void removeLifePlayer2() {
-        if (lifePlayer2 == null) return;
-        for (LifeHeart heart : lifePlayer2) {
-            removeObject(heart);
-        }
-        lifePlayer2 = null;
+    // unfreezes both players
+    public void unfreezePlayers() {
+        if (player1 != null) player1.unfreeze();
+        if (player2 != null) player2.unfreeze();
     }
 
     // executes the debug method from all game objects (for level construction purposes)
@@ -233,14 +186,6 @@ public abstract class GameWorld extends World {
         return this.leaveAnimation;
     }
     
-    public void setBlockMovement(boolean blockMovement) {
-        this.blockMovement = blockMovement;
-    }
-    
-    public boolean getBlockMovement() {
-        return this.blockMovement;
-    }
-    
     public void setPlayer1(Player player1) {
         this.player1 = player1;
     }
@@ -255,22 +200,6 @@ public abstract class GameWorld extends World {
     
     public Player getPlayer2() {
         return this.player2;
-    }
-    
-    public void setLifePlayer1(LifeHeart[] lifePlayer1) {
-        this.lifePlayer1 = lifePlayer1;
-    }
-    
-    public LifeHeart[] getLifePlayer1() {
-        return this.lifePlayer1;
-    }
-    
-    public void setLifePlayer2(LifeHeart[] lifePlayer2) {
-        this.lifePlayer2 = lifePlayer2;
-    }
-    
-    public LifeHeart[] getLifePlayer2() {
-        return this.lifePlayer2;
     }
     
 }

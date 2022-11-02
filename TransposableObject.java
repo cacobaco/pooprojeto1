@@ -2,7 +2,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 public class TransposableObject extends GameObject {
     
-    // collidable invisible object (eg. for backgrounds)
+    // transposable invisible object (eg. for backgrounds)
     public TransposableObject(int width, int height) {
         super(width, height);
     }

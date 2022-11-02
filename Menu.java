@@ -13,7 +13,26 @@ public class Menu extends World {
     }
     
     public void act() {
-        start();
+        checkStart();
+    }
+
+    // checks when user press play button and when can start
+    public void checkStart() {
+        if (leaveAnimation == null) {
+            if (playButton.isPressed()) {
+                removePlayButton();
+                addLeaveAnimation();
+            }
+        } else {
+            if (leaveAnimation.hasEnded()) {
+                start();
+            }
+        }
+    }
+
+    // starts the game
+    public void start() {
+        Greenfoot.setWorld(new Level0());
     }
     
     // sets menu's background
@@ -55,20 +74,6 @@ public class Menu extends World {
         if (leaveAnimation == null) return;
         removeObject(leaveAnimation);
         leaveAnimation = null;
-    }
-    
-    // checks when user press play button and when can start
-    public void start() {
-        if (leaveAnimation == null) {
-            if (playButton.isPressed()) {
-                removePlayButton();
-                addLeaveAnimation();
-            }
-        } else {
-            if (leaveAnimation.hasEnded()) {
-                Greenfoot.setWorld(new Level0());
-            }
-        }
     }
     
     // getters and setters

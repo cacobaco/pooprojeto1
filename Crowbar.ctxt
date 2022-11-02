@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Crowbar
+comment1.params=
+comment1.target=Crowbar()
+comment2.params=image
+comment2.target=Crowbar(java.lang.String)
+comment3.params=image
+comment3.target=Crowbar(greenfoot.GreenfootImage)
+numComments=4

@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Vent
+comment1.params=width\ height
+comment1.target=Vent(int,\ int)
+comment2.params=image
+comment2.target=Vent(java.lang.String)
+comment3.params=image
+comment3.target=Vent(greenfoot.GreenfootImage)
+numComments=4

@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Key
+comment1.params=
+comment1.target=Key()
+comment2.params=image
+comment2.target=Key(java.lang.String)
+comment3.params=image
+comment3.target=Key(greenfoot.GreenfootImage)
+numComments=4

@@ -36,7 +36,7 @@ public abstract class Button extends Actor {
         getImage().drawString(this.text, size/2, size);
     }
 
-    // draws a rectangle border around the button
+    // draws a rectangle border around the button with a given color and tickness
     public void drawBorder(Color color, int tickness) {
         GreenfootImage image = getImage();
         image.setColor(color);

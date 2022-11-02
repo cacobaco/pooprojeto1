@@ -13,7 +13,26 @@ public class GameOver extends World {
     }
     
     public void act() {
-        restart();
+        checkRestart();
+    }
+
+    // checks when user press space to restart and when can restart
+    public void checkRestart() {
+        if (leaveAnimation == null) {
+            if (Greenfoot.isKeyDown("space")) {
+                removeRestartText();
+                addLeaveAnimation();
+            }
+        } else {
+            if (leaveAnimation.hasEnded()) {
+                restart();
+            }
+        }
+    }
+
+    // restarts the game
+    public void restart() {
+        Greenfoot.setWorld(new Menu());
     }
     
     // sets background and draws game over text
@@ -62,20 +81,6 @@ public class GameOver extends World {
         if (leaveAnimation == null) return;
         removeObject(leaveAnimation);
         leaveAnimation = null;
-    }
-    
-    // checks when user press space to restart and when can restart
-    public void restart() {
-        if (leaveAnimation == null) {
-            if (Greenfoot.isKeyDown("space")) {
-                removeRestartText();
-                addLeaveAnimation();
-            }
-        } else {
-            if (leaveAnimation.hasEnded()) {
-                Greenfoot.setWorld(new Menu());
-            }
-        }
     }
     
     // getters and setters

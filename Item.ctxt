@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=Item
+comment1.params=image
+comment1.target=Item(java.lang.String)
+comment2.params=image
+comment2.target=Item(greenfoot.GreenfootImage)
+comment3.params=pickable
+comment3.target=void\ setPickable(boolean)
+comment4.params=
+comment4.target=boolean\ isPickable()
+numComments=5

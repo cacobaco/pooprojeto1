@@ -3,11 +3,11 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class Player extends Actor {
     
     // constants / default values
-    private final int DEF_LIFE = 3;
     private final int DEF_DELTA = 4;
     private final int DEF_IMAGE_STANCE = 2;
     private final int DEF_IMAGE_VARIANT = 1;
     private final int DEF_IMAGE_DELAY = 10;
+    private final int DEF_PICKUP_ITEM_DELAY = 55;
     
     /*
      * index - control
@@ -15,7 +15,8 @@ public class Player extends Actor {
      * 1 - left
      * 2 - back
      * 3 - right
-     * 4 - interact
+     * 4 - interact / pick item
+     * 5 - drop item
      */
     private final String[] controls;
     
@@ -28,51 +29,42 @@ public class Player extends Actor {
     private final GreenfootImage[] images;
 
     // player status
-    private int life;
     private int delta;
     private int imageStance;
     private int imageVariant;
     private int imageDelay;
+    private boolean freeze;
+    private Item holdingItem;
+    private int pickupItemDelay;
     
     public Player(String[] controls, GreenfootImage[] images) {
         this.controls = controls;
         this.images = images;
         
-        this.life = this.DEF_LIFE;
         this.delta = this.DEF_DELTA;
         this.imageStance = this.DEF_IMAGE_STANCE;
         this.imageVariant = this.DEF_IMAGE_VARIANT;
         this.imageDelay = this.DEF_IMAGE_DELAY;
+        this.pickupItemDelay = this.DEF_PICKUP_ITEM_DELAY;
         
         setImage(images[this.imageStance * 4 + this.imageVariant]);
     }
 
     public void act() {
-        if (!isBlocked())
-            move();
+        if (!freeze) {
+            checkMovement();
+            checkItemPickup();
+            checkDropItem();
+        }
+        holdingItemFollow();
     }
 
-    // checks if player can move
-    public boolean isBlocked() {
-        try {
-            GameWorld world = getWorldOfType(GameWorld.class);
-            return world != null && world.getBlockMovement();
-        } catch (ClassCastException ex) {
-            return true;
-        }
-    }
-    
-    /*
-     * checks if player is using the keys to move or run
-     * checks collides
-     * updates player image
-     */
-    public void move() {
-        boolean moved = false;
+    // checks player movement
+    public void checkMovement() {
         int sX = 0;
         int sY = 0;
         
-        // check pressed keys to modify sX and sY
+        // check pressed keys to determine sX, sY and imageStance
         if (Greenfoot.isKeyDown(controls[1])) {
             sX -= delta;
             imageStance = 1;
@@ -90,7 +82,7 @@ public class Player extends Actor {
             imageStance = 2;
         }
         
-        // actual movement and collide check
+        // applies and adjusts the movement and checks any collides
         setLocation(getX() + sX, getY() + sY); // move 0
         
         if (isTouching(CollidableObject.class)) {
@@ -115,9 +107,7 @@ public class Player extends Actor {
             }
         }
 
-        moved = sX != 0 || sY != 0;
-
-        // determine imageStance
+        // adjusts imageStance after collide check
         if (sY < 0) {
             imageStance = 0;
         } else if (sY > 0) {
@@ -131,6 +121,8 @@ public class Player extends Actor {
         }
 
         // change image
+        boolean moved = sX != 0 || sY != 0;
+
         if (imageDelay <= 0) {
             imageVariant = (!moved) ? DEF_IMAGE_VARIANT : ((imageVariant == 3) ? 0 : ++imageVariant);
             imageDelay = DEF_IMAGE_DELAY;
@@ -140,40 +132,116 @@ public class Player extends Actor {
         
         setImage(images[imageStance * 4 + imageVariant]);
     }
-    
-    /*
-     * isTouching inherited from actor is protected
-     * needed for level purposes
-     */
+
+    // checks player item pickup
+    public void checkItemPickup() {
+        if (pickupItemDelay > 0) {
+            pickupItemDelay--;
+            return;
+        }
+
+        if (Greenfoot.isKeyDown(controls[4])) {
+            pickupItem();
+            pickupItemDelay = DEF_PICKUP_ITEM_DELAY;
+        }
+    }
+
+    // checks player drop item
+    public void checkDropItem() {
+        if (Greenfoot.isKeyDown(controls[5])) {
+            dropItem();
+        }
+    }
+
+    // makes the holding item follow the player (above his head)
+    public void holdingItemFollow() {
+        if (holdingItem == null) return;
+        if (holdingItem.getWorld() == null) getWorld().addObject(holdingItem, getX(), getY() - 50);
+        holdingItem.setLocation(getX(), getY() - 50);
+    }
+
+    // picks any item in the ground, if holding one drops and replaces
+    public void pickupItem() {
+        Item item = (Item) getOneIntersectingObject(Item.class);
+        if (item != null) {
+            pickupItem(item);
+        }
+    }
+
+    // picks the given item, if holding one drops and replaces
+    public void pickupItem(Item item) {
+        if (item == null) {
+            if (holdingItem != null) {
+                dropItem();
+            }
+        } else {
+            if (!item.isPickable()) return;
+            if (holdingItem != null) dropItem();
+            item.setPickable(false);
+            holdingItem = item;
+            holdingItem.setLocation(getX(), getY() - 50);
+        }
+    }
+
+    // drops the holding item, if holding one
+    public void dropItem() {
+        if (holdingItem == null) return;
+        holdingItem.setLocation(getX(), getY());
+        holdingItem.setPickable(true);
+        holdingItem = null;
+    }
+
+    // destroys the item in player's hand
+    public void destroyItem() {
+        if (holdingItem == null) return;
+        getWorld().removeObject(holdingItem);
+        holdingItem = null;
+    }
+
+    // freezes the player
+    public void freeze() {
+        this.freeze = true;
+    }
+
+    // unfreezes the player
+    public void unfreeze() {
+        this.freeze = false;
+    }
+
+    // returns true if player is touching an object of the given type
     public boolean isTouching(Class clazz) {
         return getWorld() != null && super.isTouching(clazz);
     }
 
-    /*
-     * returns true when player is trying to interact
-     * needed for level purposes
-     */
-    public boolean isInteracting() {
-        return getWorld() != null && !isBlocked() && Greenfoot.isKeyDown(controls[4]);
+    // returns true if player is touching the given object
+    public boolean isTouching(Actor object) {
+        return getWorld() != null && intersects(object);
     }
 
-    /*
-     * returns true when player is trying to interact with an actor of the given type
-     * needed for level purposes
-     */
+    // returns true if player is trying to interact
+    public boolean isInteracting() {
+        return getWorld() != null && !freeze && Greenfoot.isKeyDown(controls[4]);
+    }
+
+    // returns true if player is trying to interact with an object of the given type (for collidable object with aren't intersectable)
     public boolean isInteracting(Class type) {
-        return getWorld() != null && isInteracting() && getObjectsInRange(60, type).size() > 0;
+        return isInteracting() && getObjectsInRange(60, type).size() > 0;
+    }
+
+    // returns true if player is trying to interact with the given object (for collidable object with aren't intersectable)
+    public boolean isInteracting(Actor object) {
+        return isInteracting() && getObjectsInRange(60, null).contains(object);
     }
 
     // getters and setters
-    public void setLife(int life) {
-        this.life = life;
+    public String[] getControls() {
+        return this.controls;
     }
-    
-    public int getLife() {
-        return this.life;
+
+    public GreenfootImage[] getImages() {
+        return this.images;
     }
-    
+
     public void setDelta(int delta) {
         this.delta = delta;
     }
@@ -204,6 +272,22 @@ public class Player extends Actor {
 
     public int getImageDelay() {
         return this.imageDelay;
+    }
+
+    public void setFreeze(boolean freeze) {
+        this.freeze = freeze;
+    }
+
+    public boolean isFreeze() {
+        return this.freeze;
+    }
+
+    public void setHoldingItem(Item holdingItem) {
+        this.holdingItem = holdingItem;
+    }
+
+    public Item getHoldingItem() {
+        return this.holdingItem;
     }
 
 }
