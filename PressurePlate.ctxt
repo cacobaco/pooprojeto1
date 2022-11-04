@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=PressurePlate
+comment1.params=width\ height
+comment1.target=PressurePlate(int,\ int)
+comment2.params=image
+comment2.target=PressurePlate(java.lang.String)
+comment3.params=image
+comment3.target=PressurePlate(greenfoot.GreenfootImage)
+numComments=4

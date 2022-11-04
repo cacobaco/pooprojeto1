@@ -6,4 +6,6 @@ comment2.params=image
 comment2.target=Door(java.lang.String)
 comment3.params=image
 comment3.target=Door(greenfoot.GreenfootImage)
-numComments=4
+comment4.params=
+comment4.target=void\ playSound()
+numComments=5

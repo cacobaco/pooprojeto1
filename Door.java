@@ -16,5 +16,10 @@ public class Door extends CollidableObject {
     public Door(GreenfootImage image) {
         super(image);
     }
+
+    // plays the door sound
+    public void playSound() {
+        Greenfoot.playSound("door.mp3");
+    }
     
 }

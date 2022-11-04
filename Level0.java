@@ -1,18 +1,23 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 public class Level0 extends Level {
-    
+
     private GreenfootImage image1; // closed door image
     private GreenfootImage image2; // open door image
     private Door leaveDoor; // null if open
-    
+
     public Level0() {
-        super(800, 800, 400, 350, 400, 400);
+        super(800, 800);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
         setBackground();
         addImageObjects();
         addVehicles();
         addLeaveDoor();
         addJoinAnimation();
+        spawnPlayer1(false);
+        spawnPlayer2(false);
+        addStaminaBar1();
+        addStaminaBar2();
         freezePlayers();
     }
 
@@ -32,7 +37,7 @@ public class Level0 extends Level {
     // checks if players are interacting with the leave door
     public void checkOpenLeaveDoor() {
         if (leaveDoor == null) return;
-        if ((getPlayer1().isInteracting(leaveDoor)) || (getPlayer2() != null && getPlayer2().isInteracting(leaveDoor))) {
+        if (getPlayer1().isInteracting(leaveDoor) || getPlayer2().isInteracting(leaveDoor)) {
             openLeaveDoor();
         }
     }
@@ -41,8 +46,8 @@ public class Level0 extends Level {
     public void checkLeave() {
         if (getPlayer1().getWorld() != null) {
             if (getPlayer1().getX() >= getWidth() - 1) {
-                removeObject(getPlayer1().getHoldingItem());
                 removeObject(getPlayer1());
+                removeObject(getPlayer1().getHoldingItem());
             }
         } else {
             if (!getPlayer1().isFreeze() && Greenfoot.isKeyDown(getPlayer1().getControls()[1])) {
@@ -52,8 +57,8 @@ public class Level0 extends Level {
 
         if (getPlayer2().getWorld() != null) {
             if (getPlayer2().getX() >= getWidth() - 1) {
-                removeObject(getPlayer2().getHoldingItem());
                 removeObject(getPlayer2());
+                removeObject(getPlayer2().getHoldingItem());
             }
         } else {
             if (!getPlayer2().isFreeze() && Greenfoot.isKeyDown(getPlayer2().getControls()[1])) {
@@ -82,8 +87,14 @@ public class Level0 extends Level {
 
     // opens leave door
     public void openLeaveDoor() {
-        if (leaveDoor == null) return;
+        leaveDoor.playSound();
         removeLeaveDoor();
+    }
+
+    // closes leave door
+    public void closeLeaveDoor() {
+        addLeaveDoor();
+        leaveDoor.playSound();
     }
     
     // finishes this level
@@ -140,6 +151,34 @@ public class Level0 extends Level {
         removeObject(leaveDoor);
         leaveDoor = null;
         setBackground(image2);
+    }
+
+    // spawns player 1
+    public void spawnPlayer1(boolean fromElevator) {
+        if (getPlayer1() != null) {
+            spawnPlayer1(400, 365, getPlayer1());
+        } else {
+            spawnPlayer1(400, 365);
+        }
+    }
+
+    // spawns a given player 1
+    public void spawnPlayer1(boolean fromElevator, Player player1) {
+        spawnPlayer1(400, 365, player1);
+    }
+
+    // spawns player 2
+    public void spawnPlayer2(boolean fromElevator) {
+        if (getPlayer2() != null) {
+            spawnPlayer2(400, 415, getPlayer2());
+        } else {
+            spawnPlayer2(400, 415);
+        }
+    }
+
+    // spawns a given player 2
+    public void spawnPlayer2(boolean fromElevator, Player player2) {
+        spawnPlayer2(400, 415, player2);
     }
 
     // getters and setters

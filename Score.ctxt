@@ -1,0 +1,27 @@
+#BlueJ class context
+comment0.target=Score
+comment1.params=value\ defDelay
+comment1.target=Score(int,\ int)
+comment10.params=
+comment10.target=int\ getDelay()
+comment11.params=count
+comment11.target=void\ setCount(boolean)
+comment12.params=
+comment12.target=boolean\ isCount()
+comment2.params=value\ defDelay\ count
+comment2.target=Score(int,\ int,\ boolean)
+comment3.params=
+comment3.target=void\ act()
+comment4.params=
+comment4.target=void\ update()
+comment5.params=
+comment5.target=void\ setImage()
+comment6.params=value
+comment6.target=void\ setValue(int)
+comment7.params=
+comment7.target=int\ getValue()
+comment8.params=
+comment8.target=int\ getDefDelay()
+comment9.params=delay
+comment9.target=void\ setDelay(int)
+numComments=13

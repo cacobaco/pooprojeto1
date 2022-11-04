@@ -1,15 +1,16 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
-public class GameOver extends World {
+public class GameOver extends AnimatedWorld {
 
-    private Text restartText;
-    private SwitchWorldAnimation leaveAnimation;
+    private Text restartText; 
     
     public GameOver() {
-        super(800, 800, 1);
+        super(800, 800);
         setPaintOrder(SwitchWorldAnimation.class, Text.class);
         setBackground();
         addRestartText();
+        addJoinAnimation();
+        playSound();
     }
     
     public void act() {
@@ -18,21 +19,27 @@ public class GameOver extends World {
 
     // checks when user press space to restart and when can restart
     public void checkRestart() {
-        if (leaveAnimation == null) {
-            if (Greenfoot.isKeyDown("space")) {
-                removeRestartText();
-                addLeaveAnimation();
-            }
-        } else {
-            if (leaveAnimation.hasEnded()) {
-                restart();
+        if (getJoinAnimation() != null && getJoinAnimation().hasEnded()) {
+            removeJoinAnimation();
+        }
+
+        if (getJoinAnimation() == null) {
+            if (getLeaveAnimation() == null) {
+                if (Greenfoot.isKeyDown("space")) {
+                    removeRestartText();
+                    addLeaveAnimation();
+                }
+            } else {
+                if (getLeaveAnimation().hasEnded()) {
+                    restart();
+                }
             }
         }
     }
 
     // restarts the game
     public void restart() {
-        Greenfoot.setWorld(new Menu());
+        Greenfoot.setWorld(new Controls());
     }
     
     // sets background and draws game over text
@@ -62,25 +69,9 @@ public class GameOver extends World {
         restartText = null;
     }
 
-    // adds default leave animation, if one is active replaces
-    public void addLeaveAnimation() {
-        if (this.leaveAnimation != null) removeLeaveAnimation();
-        this.leaveAnimation = new SwitchWorldAnimation(getWidth(), getHeight(), true);
-        addObject(leaveAnimation, getWidth()/2, getHeight()/2);
-    }
-
-    // adds leave animation, if one is active replaces
-    public void addLeaveAnimation(SwitchWorldAnimation leaveAnimation) {
-        if (this.leaveAnimation != null) removeLeaveAnimation();
-        this.leaveAnimation = leaveAnimation;
-        addObject(leaveAnimation, getWidth()/2, getHeight()/2);
-    }
-
-    // removes leave animation, if active
-    public void removeLeaveAnimation() {
-        if (leaveAnimation == null) return;
-        removeObject(leaveAnimation);
-        leaveAnimation = null;
+    // plays the malefical voice laugh sound
+    public void playSound() {
+        Greenfoot.playSound("laugh.mp3");
     }
     
     // getters and setters
@@ -90,14 +81,6 @@ public class GameOver extends World {
 
     public Text getRestartText() {
         return this.restartText;
-    }
-
-    public void setLeaveAnimation(SwitchWorldAnimation leaveAnimation) {
-        this.leaveAnimation = leaveAnimation;
-    }
-    
-    public SwitchWorldAnimation getLeaveAnimation() {
-        return this.leaveAnimation;
     }
     
 }

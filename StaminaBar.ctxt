@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=StaminaBar
+comment1.params=player
+comment1.target=StaminaBar(Player)
+comment2.params=
+comment2.target=void\ act()
+comment3.params=percent
+comment3.target=void\ update(int)
+comment4.params=
+comment4.target=void\ setImages()
+comment5.params=images
+comment5.target=void\ setImages(greenfoot.GreenfootImage[])
+comment6.params=
+comment6.target=greenfoot.GreenfootImage[]\ getImages()
+comment7.params=player
+comment7.target=void\ setPlayer(Player)
+comment8.params=
+comment8.target=Player\ getPlayer()
+numComments=9

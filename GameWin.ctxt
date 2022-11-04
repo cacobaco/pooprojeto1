@@ -1,0 +1,27 @@
+#BlueJ class context
+comment0.target=GameWin
+comment1.params=score
+comment1.target=GameWin(int)
+comment10.params=restartText
+comment10.target=void\ setRestartText(Text)
+comment11.params=
+comment11.target=Text\ getRestartText()
+comment12.params=
+comment12.target=int\ getScore()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=
+comment3.target=void\ checkRestart()
+comment4.params=
+comment4.target=void\ restart()
+comment5.params=
+comment5.target=void\ setBackground()
+comment6.params=
+comment6.target=void\ addWinText()
+comment7.params=
+comment7.target=void\ addScoreText()
+comment8.params=
+comment8.target=void\ addRestartText()
+comment9.params=
+comment9.target=void\ removeRestartText()
+numComments=13

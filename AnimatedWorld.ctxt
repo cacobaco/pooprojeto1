@@ -1,0 +1,25 @@
+#BlueJ class context
+comment0.target=AnimatedWorld
+comment1.params=width\ height
+comment1.target=AnimatedWorld(int,\ int)
+comment10.params=leaveAnimation
+comment10.target=void\ setLeaveAnimation(SwitchWorldAnimation)
+comment11.params=
+comment11.target=SwitchWorldAnimation\ getLeaveAnimation()
+comment2.params=
+comment2.target=void\ addJoinAnimation()
+comment3.params=joinAnimation
+comment3.target=void\ addJoinAnimation(SwitchWorldAnimation)
+comment4.params=
+comment4.target=void\ removeJoinAnimation()
+comment5.params=
+comment5.target=void\ addLeaveAnimation()
+comment6.params=leaveAnimation
+comment6.target=void\ addLeaveAnimation(SwitchWorldAnimation)
+comment7.params=
+comment7.target=void\ removeLeaveAnimation()
+comment8.params=joinAnimation
+comment8.target=void\ setJoinAnimation(SwitchWorldAnimation)
+comment9.params=
+comment9.target=SwitchWorldAnimation\ getJoinAnimation()
+numComments=12

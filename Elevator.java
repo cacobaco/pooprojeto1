@@ -1,7 +1,8 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 public class Elevator extends GameWorld {
-    
+
+    // static
     private static boolean keyInserted; // if key was inserted
 
     private GreenfootImage image1; // open door
@@ -15,43 +16,53 @@ public class Elevator extends GameWorld {
     // constructor for debug
     public Elevator() {
         super(800, 800);
-        setPaintOrder(SwitchWorldAnimation.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
         setBackground();
-        this.currentLevel = null;
-        this.nextLevel = null;
+        addTimer(false);
         addImageObjects();
         addLever();
         spawnPlayer1(1, 400);
         spawnPlayer2(1, 400);
+        addStaminaBar1();
+        addStaminaBar2();
+        keyInserted = false;
         debug();
     }
     
-    public Elevator(int width, int height, Level currentLevel, Level nextLevel) {
-        super(width, height);
-        setPaintOrder(SwitchWorldAnimation.class, Player.class, GameObject.class);
-        setBackground();
+    public Elevator(Level currentLevel, Level nextLevel, Timer timer) {
+        super(800, 800);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
         this.currentLevel = currentLevel;
         this.nextLevel = nextLevel;
+        setBackground();
+        timer.setCount(false);
+        addTimer(timer);
         addImageObjects();
         addLever();
         addJoinAnimation();
+        spawnPlayer1(1, 400);
+        spawnPlayer2(1, 400);
+        addStaminaBar1();
+        addStaminaBar2();
         freezePlayers();
-        spawnPlayer1(1, height/2);
-        spawnPlayer2(1, height/2);
     }
 
-    public Elevator(int width, int height, Level currentLevel, Level nextLevel, Player player1, Player player2) {
-        super(width, height);
-        setPaintOrder(SwitchWorldAnimation.class, Player.class, GameObject.class);
-        setBackground();
+    public Elevator(Level currentLevel, Level nextLevel, Timer timer, Player player1, Player player2) {
+        super(800, 800);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
         this.currentLevel = currentLevel;
         this.nextLevel = nextLevel;
+        setBackground();
+        timer.setCount(false);
+        addTimer(timer);
         addImageObjects();
         addLever();
         addJoinAnimation();
+        spawnPlayer1(1, 400, player1);
+        spawnPlayer2(1, 400, player2);
+        addStaminaBar1();
+        addStaminaBar2();
         freezePlayers();
-        spawnPlayer1(1, height/2, player1);
-        spawnPlayer2(1, height/2, player2);
     }
 
     public void act() {
@@ -59,6 +70,7 @@ public class Elevator extends GameWorld {
         checkPullLever();
         checkStopMoving();
         checkLeave();
+        checkGameOver();
     }
 
     // checks when the level can start and starts it
@@ -75,23 +87,19 @@ public class Elevator extends GameWorld {
         if (getPlayer1().getWorld() == null || getPlayer2().getWorld() == null) return;
 
         if (!keyInserted) {
-            if (getPlayer1().getHoldingItem() instanceof Key && getPlayer1().isInteracting(Lever.class)) {
-                keyInserted = true;
+            if (getPlayer1().getHoldingItem() instanceof Key && getPlayer1().isInteracting(lever)) {
                 getPlayer1().destroyItem();
+                insertKey();
                 pullLever();
             }
 
-            if (getPlayer2().getHoldingItem() instanceof Key && getPlayer2().isInteracting(Lever.class)) {
-                keyInserted = true;
+            if (getPlayer2().getHoldingItem() instanceof Key && getPlayer2().isInteracting(lever)) {
                 getPlayer2().destroyItem();
+                insertKey();
                 pullLever();
             }
         } else {
-            if (getPlayer1().isInteracting(Lever.class)) {
-                pullLever();
-            }
-
-            if (getPlayer2().isInteracting(Lever.class)) {
+            if (getPlayer1().isInteracting(lever) || getPlayer2().isInteracting(lever)) {
                 pullLever();
             }
         }
@@ -100,9 +108,7 @@ public class Elevator extends GameWorld {
     // checks when the elevator stops moving
     public void checkStopMoving() {
         if (sound == null) return;
-
         if (sound.isPlaying()) return;
-
         stopMoving();
     }
 
@@ -110,8 +116,8 @@ public class Elevator extends GameWorld {
     public void checkLeave() {
         if (getPlayer1().getWorld() != null) {
             if (getPlayer1().getX() <= 0) {
-                removeObject(getPlayer1().getHoldingItem());
                 removeObject(getPlayer1());
+                removeObject(getPlayer1().getHoldingItem());
             }
         } else {
             if (!getPlayer1().isFreeze() && Greenfoot.isKeyDown(getPlayer1().getControls()[3])) {
@@ -121,8 +127,8 @@ public class Elevator extends GameWorld {
 
         if (getPlayer2().getWorld() != null) {
             if (getPlayer2().getX() <= 0) {
-                removeObject(getPlayer2().getHoldingItem());
                 removeObject(getPlayer2());
+                removeObject(getPlayer2().getHoldingItem());
             }
         } else {
             if (!getPlayer2().isFreeze() && Greenfoot.isKeyDown(getPlayer2().getControls()[3])) {
@@ -132,6 +138,7 @@ public class Elevator extends GameWorld {
 
         if (getPlayer1().getWorld() == null && getPlayer2().getWorld() == null) {
             if (getLeaveAnimation() == null) {
+                getTimer().setCount(false);
                 freezePlayers();
                 addLeaveAnimation();
             } else {
@@ -143,10 +150,18 @@ public class Elevator extends GameWorld {
         }
     }
 
+    // checks if timer <= 0
+    public void checkGameOver() {
+        if (getTimer().getValue() <= 0) {
+            gameOver();
+        }
+    }
+
     // starts the elevator "level"
     public void start() {
         removeJoinAnimation();
         unfreezePlayers();
+        getTimer().setCount(true);
     }
 
     // pulls the lever
@@ -166,24 +181,63 @@ public class Elevator extends GameWorld {
     // makes the elevator stop moving
     public void stopMoving() {
         stopSound();
-        removeDoor();
+        openDoor();
     }
 
     // makes player leave the elevator either to the current level (if elevator wasn't used) or to the next level (if elevator was used)
     public void leave() {
         if (lever != null) {
-            currentLevel.setPlayer1(getPlayer1());
-            currentLevel.setPlayer2(getPlayer2());
+            getTimer().setCount(false);
+            currentLevel.addTimer(getTimer());
             currentLevel.setElevator(this);
             Greenfoot.setWorld(currentLevel);
-            currentLevel.spawnPlayer1(currentLevel.getWidth() - 2, currentLevel.getHeight()/2, getPlayer1());
-            currentLevel.spawnPlayer2(currentLevel.getWidth() - 2, currentLevel.getHeight()/2, getPlayer2());
+            currentLevel.spawnPlayer1(true, getPlayer1());
+            currentLevel.spawnPlayer2(true, getPlayer2());
             currentLevel.addJoinAnimation();
         } else {
-            nextLevel.setPlayer1(getPlayer1());
-            nextLevel.setPlayer2(getPlayer2());
+            getTimer().setCount(false);
+            nextLevel.addTimer(getTimer());
             Greenfoot.setWorld(nextLevel);
+            nextLevel.spawnPlayer1(false, getPlayer1()); // we set fromElevator to false because it's the first time he's entering the level
+            nextLevel.spawnPlayer2(false, getPlayer2()); // we set fromElevator to false because it's the first time he's entering the level
+            nextLevel.addJoinAnimation();
         }
+    }
+
+    // opens the door
+    public void openDoor() {
+        door.playSound();
+        removeDoor();
+    }
+
+    // closes the door
+    public void closeDoor() {
+        addDoor();
+        door.playSound();
+    }
+
+    // inserts the key
+    public void insertKey() {
+        Elevator.keyInserted = true;
+    }
+
+    // removes the key
+    public void removeKey() {
+        Elevator.keyInserted = false;
+    }
+    
+    // plays the moving sound, if not playing
+    public void playSound() {
+        if (sound != null) return;
+        sound = new GreenfootSound("elevator/elevator.mp3");
+        sound.play();
+    }
+
+    // stops the moving sound, if playing
+    public void stopSound() {
+        if (sound == null) return;
+        sound.stop();
+        sound = null;
     }
 
     // sets the background
@@ -262,18 +316,9 @@ public class Elevator extends GameWorld {
         addObject(new CollidableObject(50, 50), 231, 318);
     }
 
-    // plays the moving sound, if not playing
-    public void playSound() {
-        if (sound != null) return;
-        sound = new GreenfootSound("elevator/elevator.mp3");
-        sound.play();
-    }
-
-    // stops the moving sound, if playing
-    public void stopSound() {
-        if (sound == null) return;
-        sound.stop();
-        sound = null;
+    // game over
+    public void gameOver() {
+        Greenfoot.setWorld(new GameOver());
     }
     
     // getters and setters

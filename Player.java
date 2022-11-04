@@ -3,10 +3,11 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class Player extends Actor {
     
     // constants / default values
-    private final int DEF_DELTA = 4;
+    private final int DEF_DELTA = 3;
     private final int DEF_IMAGE_STANCE = 2;
     private final int DEF_IMAGE_VARIANT = 1;
     private final int DEF_IMAGE_DELAY = 10;
+    private final int DEF_STAMINA = 100;
     private final int DEF_PICKUP_ITEM_DELAY = 55;
     
     /*
@@ -17,6 +18,7 @@ public class Player extends Actor {
      * 3 - right
      * 4 - interact / pick item
      * 5 - drop item
+     * 6 - run
      */
     private final String[] controls;
     
@@ -34,6 +36,7 @@ public class Player extends Actor {
     private int imageVariant;
     private int imageDelay;
     private boolean freeze;
+    private int stamina;
     private Item holdingItem;
     private int pickupItemDelay;
     
@@ -45,24 +48,28 @@ public class Player extends Actor {
         this.imageStance = this.DEF_IMAGE_STANCE;
         this.imageVariant = this.DEF_IMAGE_VARIANT;
         this.imageDelay = this.DEF_IMAGE_DELAY;
+        this.stamina = this.DEF_STAMINA;
         this.pickupItemDelay = this.DEF_PICKUP_ITEM_DELAY;
         
         setImage(images[this.imageStance * 4 + this.imageVariant]);
     }
 
     public void act() {
+        holdingItemFollow();
         if (!freeze) {
             checkMovement();
             checkItemPickup();
             checkDropItem();
         }
-        holdingItemFollow();
     }
 
     // checks player movement
     public void checkMovement() {
+        boolean runned = Greenfoot.isKeyDown(controls[6]);
         int sX = 0;
         int sY = 0;
+
+        if (runned && stamina > 0) delta *= 2;
         
         // check pressed keys to determine sX, sY and imageStance
         if (Greenfoot.isKeyDown(controls[1])) {
@@ -123,11 +130,13 @@ public class Player extends Actor {
         // change image
         boolean moved = sX != 0 || sY != 0;
 
-        if (imageDelay <= 0) {
+        if (runned) delta = DEF_DELTA;
+        if (runned && moved && stamina > 0) stamina--;
+        if (!runned && stamina < DEF_STAMINA) stamina++;
+
+        if (--imageDelay <= 0) {
             imageVariant = (!moved) ? DEF_IMAGE_VARIANT : ((imageVariant == 3) ? 0 : ++imageVariant);
             imageDelay = DEF_IMAGE_DELAY;
-        } else {
-            imageDelay--;
         }
         
         setImage(images[imageStance * 4 + imageVariant]);
@@ -135,10 +144,7 @@ public class Player extends Actor {
 
     // checks player item pickup
     public void checkItemPickup() {
-        if (pickupItemDelay > 0) {
-            pickupItemDelay--;
-            return;
-        }
+        if (--pickupItemDelay > 0) return;
 
         if (Greenfoot.isKeyDown(controls[4])) {
             pickupItem();
@@ -171,12 +177,14 @@ public class Player extends Actor {
     // picks the given item, if holding one drops and replaces
     public void pickupItem(Item item) {
         if (item == null) {
-            if (holdingItem != null) {
-                dropItem();
-            }
+            if (holdingItem != null) dropItem();
         } else {
             if (!item.isPickable()) return;
-            if (holdingItem != null) dropItem();
+            if (holdingItem != null) {
+                dropItem();
+            } else {
+                playPickupDropSound();
+            }
             item.setPickable(false);
             holdingItem = item;
             holdingItem.setLocation(getX(), getY() - 50);
@@ -186,6 +194,7 @@ public class Player extends Actor {
     // drops the holding item, if holding one
     public void dropItem() {
         if (holdingItem == null) return;
+        playPickupDropSound();
         holdingItem.setLocation(getX(), getY());
         holdingItem.setPickable(true);
         holdingItem = null;
@@ -194,8 +203,19 @@ public class Player extends Actor {
     // destroys the item in player's hand
     public void destroyItem() {
         if (holdingItem == null) return;
+        playBreakSound();
         getWorld().removeObject(holdingItem);
         holdingItem = null;
+    }
+
+    // plays the pickup or drop sound
+    public void playPickupDropSound() {
+        Greenfoot.playSound("pickupdrop.mp3");
+    }
+
+    // plays the break sound
+    public void playBreakSound() {
+        Greenfoot.playSound("break.mp3");
     }
 
     // freezes the player
@@ -210,12 +230,12 @@ public class Player extends Actor {
 
     // returns true if player is touching an object of the given type
     public boolean isTouching(Class clazz) {
-        return getWorld() != null && super.isTouching(clazz);
+        return clazz != null && getWorld() != null && super.isTouching(clazz);
     }
 
     // returns true if player is touching the given object
     public boolean isTouching(Actor object) {
-        return getWorld() != null && intersects(object);
+        return object != null && object.getWorld() != null && getWorld() != null && intersects(object);
     }
 
     // returns true if player is trying to interact
@@ -225,12 +245,28 @@ public class Player extends Actor {
 
     // returns true if player is trying to interact with an object of the given type (for collidable object with aren't intersectable)
     public boolean isInteracting(Class type) {
-        return isInteracting() && getObjectsInRange(60, type).size() > 0;
+        return type != null && isInteracting() && getObjectsInRange(65, type).size() > 0;
     }
 
     // returns true if player is trying to interact with the given object (for collidable object with aren't intersectable)
     public boolean isInteracting(Actor object) {
-        return isInteracting() && getObjectsInRange(60, null).contains(object);
+        if (object == null || object.getWorld() == null || getWorld() == null || freeze || !Greenfoot.isKeyDown(controls[4])) return false;
+        
+        int imageWidth = object.getImage().getWidth();
+        int imageHeight = object.getImage().getHeight();
+        int range = 0;
+
+        if (getY() >= object.getY() + imageHeight) {
+            range = imageHeight/2;
+        } else if (getY() <= object.getY() - imageHeight) {
+            range = imageHeight/2;
+        } else if (getX() >= object.getX() + imageWidth) {
+            range = imageWidth/2;
+        } else if (getX() <= object.getX() + imageWidth) {
+            range = imageWidth/2;
+        }
+        
+        return getObjectsInRange(38 + range, null).contains(object);
     }
 
     // getters and setters
@@ -282,12 +318,28 @@ public class Player extends Actor {
         return this.freeze;
     }
 
+    public void setStamina(int stamina) {
+        this.stamina = stamina;
+    }
+
+    public int getStamina() {
+        return this.stamina;
+    }
+
     public void setHoldingItem(Item holdingItem) {
         this.holdingItem = holdingItem;
     }
 
     public Item getHoldingItem() {
         return this.holdingItem;
+    }
+
+    public void setPickupItemDelay(int pickupItemDelay) {
+        this.pickupItemDelay = pickupItemDelay;
+    }
+
+    public int getPickupItemDelay() {
+        return this.pickupItemDelay;
     }
 
 }

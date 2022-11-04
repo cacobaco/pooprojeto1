@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Helicopter
+comment1.params=width\ height
+comment1.target=Helicopter(int,\ int)
+comment2.params=image
+comment2.target=Helicopter(java.lang.String)
+comment3.params=image
+comment3.target=Helicopter(greenfoot.GreenfootImage)
+numComments=4

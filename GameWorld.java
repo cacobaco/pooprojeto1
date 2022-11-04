@@ -1,64 +1,50 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
-public abstract class GameWorld extends World {
-    
-    private SwitchWorldAnimation joinAnimation; // when joining this level
-    private SwitchWorldAnimation leaveAnimation; // when leaving this level
+public abstract class GameWorld extends AnimatedWorld {
+
+    private Timer timer;
     private Player player1;
     private Player player2;
+    private StaminaBar staminaBar1;
+    private StaminaBar staminaBar2;
     
     public GameWorld(int width, int height) {
-        super(width, height, 1);
-        setPaintOrder(SwitchWorldAnimation.class, Player.class, GameObject.class);
+        super(width, height);
     }
 
-    // adds default join animation, if one is active replaces
-    public void addJoinAnimation() {
-        if (this.joinAnimation != null) removeJoinAnimation();
-        this.joinAnimation = new SwitchWorldAnimation(getWidth(), getHeight(), false);
-        addObject(joinAnimation, getWidth()/2, getHeight()/2);
+    // adds default timer, if one is active replaces
+    public void addTimer() {
+        if (this.timer != null) removeTimer();
+        this.timer = new Timer(300, 55);
+        addObject(timer, getWidth()/2, 25);
     }
 
-    // adds join animation, if one is active replaces
-    public void addJoinAnimation(SwitchWorldAnimation joinAnimation) {
-        if (this.joinAnimation != null) removeJoinAnimation();
-        this.joinAnimation = joinAnimation;
-        addObject(joinAnimation, getWidth()/2, getHeight()/2);
+    // adds default timer, if one is active replaces
+    public void addTimer(boolean count) {
+        if (this.timer != null) removeTimer();
+        this.timer= new Timer(300, 55, count);
+        addObject(timer, getWidth()/2, 25);
     }
 
-    // removes join animation, if active
-    public void removeJoinAnimation() {
-        if (joinAnimation == null) return;
-        removeObject(joinAnimation);
-        joinAnimation = null;
+    // adds timer, if one is active replaces
+    public void addTimer(Timer timer) {
+        if (this.timer != null) removeTimer();
+        this.timer = timer;
+        addObject(timer, getWidth()/2, 25);
     }
 
-    // adds default leave animation, if one is active replaces
-    public void addLeaveAnimation() {
-        if (this.leaveAnimation != null) removeLeaveAnimation();
-        this.leaveAnimation = new SwitchWorldAnimation(getWidth(), getHeight(), true);
-        addObject(leaveAnimation, getWidth()/2, getHeight()/2);
-    }
-
-    // adds leave animation, if one is active replaces
-    public void addLeaveAnimation(SwitchWorldAnimation leaveAnimation) {
-        if (this.leaveAnimation != null) removeLeaveAnimation();
-        this.leaveAnimation = leaveAnimation;
-        addObject(leaveAnimation, getWidth()/2, getHeight()/2);
-    }
-
-    // removes leave animation, if active
-    public void removeLeaveAnimation() {
-        if (leaveAnimation == null) return;
-        removeObject(leaveAnimation);
-        leaveAnimation = null;
+    // removes timer, if active
+    public void removeTimer() {
+        if (timer == null) return;
+        removeObject(timer);
+        timer = null;
     }
 
     // spawns a fresh player 1 at a given x and y, if one is spawned replaces
     public void spawnPlayer1(int x, int y) {
         if (player1 != null) despawnPlayer1();
 
-        String[] controls = {"w", "a", "s", "d", "e", "f"};
+        String[] controls = {"w", "a", "s", "d", "e", "f", "shift"};
         
         GreenfootImage[] images = {
             new GreenfootImage("boneco_red/w1.png"),
@@ -106,7 +92,7 @@ public abstract class GameWorld extends World {
     public void spawnPlayer2(int x, int y) {
         if (player2 != null) despawnPlayer2();
 
-        String[] controls = {"i", "j", "k", "l", "u", "h"};
+        String[] controls = {"i", "j", "k", "l", "u", "h", "space"};
         
         GreenfootImage[] images = {
             new GreenfootImage("boneco_purple/w1.png"),
@@ -162,6 +148,48 @@ public abstract class GameWorld extends World {
         if (player2 != null) player2.unfreeze();
     }
 
+    // adds default stamina bar 1, if one is active replaces
+    public void addStaminaBar1() {
+        if (this.staminaBar1 != null) removeStaminaBar1();
+        this.staminaBar1 = new StaminaBar(player1);
+        addObject(staminaBar1, 100, 50);
+    }
+
+    // adds stamina bar 1, if one is active replaces
+    public void addStaminaBar1(StaminaBar staminaBar1) {
+        if (this.staminaBar1 != null) removeStaminaBar1();
+        this.staminaBar1 = staminaBar1;
+        addObject(staminaBar1, 100, 50);
+    }
+
+    // removes stamina bar 1, if active
+    public void removeStaminaBar1() {
+        if (staminaBar1 == null) return;
+        removeObject(staminaBar1);
+        staminaBar1 = null;
+    }
+
+    // adds default stamina bar 2, if one is active replaces
+    public void addStaminaBar2() {
+        if (this.staminaBar2 != null) removeStaminaBar2();
+        this.staminaBar2 = new StaminaBar(player2);
+        addObject(staminaBar2, getWidth() - 100, 50);
+    }
+
+    // adds stamina bar 2, if one is active replaces
+    public void addStaminaBar2(StaminaBar staminaBar2) {
+        if (this.staminaBar2 != null) removeStaminaBar2();
+        this.staminaBar2 = staminaBar2;
+        addObject(staminaBar2, getWidth() - 100, 50);
+    }
+
+    // removes stamina bar 2, if active
+    public void removeStaminaBar2() {
+        if (staminaBar2 == null) return;
+        removeObject(staminaBar2);
+        staminaBar2 = null;
+    }
+
     // executes the debug method from all game objects (for level construction purposes)
     public void debug() {
         for (GameObject object : getObjects(GameObject.class)) {
@@ -170,20 +198,12 @@ public abstract class GameWorld extends World {
     }
     
     // getters and setters
-    public void setJoinAnimation(SwitchWorldAnimation joinAnimation) {
-        this.joinAnimation = joinAnimation;
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
-    
-    public SwitchWorldAnimation getJoinAnimation() {
-        return this.joinAnimation;
-    }
-    
-    public void setLeaveAnimation(SwitchWorldAnimation leaveAnimation) {
-        this.leaveAnimation = leaveAnimation;
-    }
-    
-    public SwitchWorldAnimation getLeaveAnimation() {
-        return this.leaveAnimation;
+
+    public Timer getTimer() {
+        return this.timer;
     }
     
     public void setPlayer1(Player player1) {
@@ -200,6 +220,22 @@ public abstract class GameWorld extends World {
     
     public Player getPlayer2() {
         return this.player2;
+    }
+
+    public void setStaminaBar1(StaminaBar staminaBar1) {
+        this.staminaBar1 = staminaBar1;
+    }
+
+    public StaminaBar getStaminaBar1() {
+        return this.staminaBar1;
+    }
+
+    public void setStaminaBar2(StaminaBar staminaBar2) {
+        this.staminaBar2 = staminaBar2;
+    }
+
+    public StaminaBar getStaminaBar2() {
+        return this.staminaBar2;
     }
     
 }

@@ -1,12 +1,11 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
-public class Menu extends World {
+public class Menu extends AnimatedWorld {
 
     private PlayButton playButton;
-    private SwitchWorldAnimation leaveAnimation;
     
     public Menu() {
-        super(800, 800, 1);
+        super(800, 800);
         setPaintOrder(SwitchWorldAnimation.class, Button.class);
         setBackground();
         addPlayButton();
@@ -18,21 +17,27 @@ public class Menu extends World {
 
     // checks when user press play button and when can start
     public void checkStart() {
-        if (leaveAnimation == null) {
-            if (playButton.isPressed()) {
-                removePlayButton();
-                addLeaveAnimation();
-            }
-        } else {
-            if (leaveAnimation.hasEnded()) {
-                start();
+        if (getJoinAnimation() != null && getJoinAnimation().hasEnded()) {
+            removeJoinAnimation();
+        }
+
+        if (getJoinAnimation() == null) {
+            if (getLeaveAnimation() == null) {
+                if (playButton.isPressed()) {
+                    removePlayButton();
+                    addLeaveAnimation();
+                }
+            } else {
+                if (getLeaveAnimation().hasEnded()) {
+                    start();
+                }
             }
         }
     }
 
     // starts the game
     public void start() {
-        Greenfoot.setWorld(new Level0());
+        Greenfoot.setWorld(new Controls());
     }
     
     // sets menu's background
@@ -45,7 +50,7 @@ public class Menu extends World {
     public void addPlayButton() {
         if (playButton != null) return;
         playButton = new PlayButton();
-        addObject(playButton, getWidth()/2, getHeight() - getHeight()/10);
+        addObject(playButton, 425, 690);
     }
 
     // removes play button, if added
@@ -53,27 +58,6 @@ public class Menu extends World {
         if (playButton == null) return;
         removeObject(playButton);
         playButton = null;
-    }
-
-    // adds default leave animation, if one is active replaces
-    public void addLeaveAnimation() {
-        if (this.leaveAnimation != null) removeLeaveAnimation();
-        this.leaveAnimation = new SwitchWorldAnimation(getWidth(), getHeight(), true);
-        addObject(leaveAnimation, getWidth()/2, getHeight()/2);
-    }
-
-    // adds leave animation, if one is active replaces
-    public void addLeaveAnimation(SwitchWorldAnimation leaveAnimation) {
-        if (this.leaveAnimation != null) removeLeaveAnimation();
-        this.leaveAnimation = leaveAnimation;
-        addObject(leaveAnimation, getWidth()/2, getHeight()/2);
-    }
-
-    // removes leave animation, if active
-    public void removeLeaveAnimation() {
-        if (leaveAnimation == null) return;
-        removeObject(leaveAnimation);
-        leaveAnimation = null;
     }
     
     // getters and setters
@@ -83,14 +67,6 @@ public class Menu extends World {
     
     public PlayButton getPlayButton() {
         return this.playButton;
-    }
-    
-    public void setLeaveAnimation(SwitchWorldAnimation leaveAnimation) {
-        this.leaveAnimation = leaveAnimation;
-    }
-    
-    public SwitchWorldAnimation getLeaveAnimation() {
-        return this.leaveAnimation;
     }
     
 }
