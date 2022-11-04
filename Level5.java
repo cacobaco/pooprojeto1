@@ -12,10 +12,11 @@ public class Level5 extends Level {
     private Door leaveDoor; // null if open
     private Helicopter helicopter;
     private GreenfootSound helicopterSound;
+    private Creature creature;
     
     public Level5() {
         super(800, 800);
-        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Creature.class, Player.class, GameObject.class);
         setBackground();
         addTimer(true);
         addImageObjects();
@@ -29,13 +30,14 @@ public class Level5 extends Level {
         spawnPlayer2(false);
         addStaminaBar1();
         addStaminaBar2();
+        spawnCreature();
         playHelicopterSound();
         debug();
     }
     
     public Level5(Timer timer, Player player1, Player player2) {
         super(800, 800);
-        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Creature.class, Player.class, GameObject.class);
         setBackground();
         timer.setCount(false);
         addTimer(timer);
@@ -51,6 +53,8 @@ public class Level5 extends Level {
         spawnPlayer2(false, player2);
         addStaminaBar1();
         addStaminaBar2();
+        spawnCreature();
+        creature.freeze();
         playHelicopterSound();
         freezePlayers();
     }
@@ -153,7 +157,7 @@ public class Level5 extends Level {
 
     // checks if timer <= 0
     public void checkGameOver() {
-        if (getTimer().getValue() <= 0) {
+        if (getPlayer1().isDead() && getPlayer2().isDead() || getTimer().getValue() <= 0) {
             gameOver();
         }
     }
@@ -163,6 +167,7 @@ public class Level5 extends Level {
         getTimer().setCount(true);
         removeJoinAnimation();
         unfreezePlayers();
+        creature.unfreeze();
     }
 
     // opens the box
@@ -360,6 +365,20 @@ public class Level5 extends Level {
         helicopterSound = null;
     }
 
+    // spawns the creature, if spawned
+    public void spawnCreature() {
+        if (creature != null) return;
+        creature = new Creature();
+        addObject(creature, 90, 515);
+    }
+
+    // despawns the creature, it not spawned
+    public void despawnCreature() {
+        if (creature == null) return;
+        removeObject(creature);
+        creature = null;
+    }
+
     // spawns player 1
     public void spawnPlayer1(boolean fromElevator) {
         if (fromElevator) {
@@ -396,9 +415,9 @@ public class Level5 extends Level {
             }
         } else {
             if (getPlayer2() != null) {
-                spawnPlayer2(740, 515, getPlayer2());
+                spawnPlayer2(735, 515, getPlayer2());
             } else {
-                spawnPlayer2(740, 515);
+                spawnPlayer2(735, 515);
             }
         }
     }
@@ -408,7 +427,7 @@ public class Level5 extends Level {
         if (fromElevator) {
             spawnPlayer2(getWidth()-2, 540, player2);
         } else {
-            spawnPlayer2(740, 515, player2);
+            spawnPlayer2(735, 515, player2);
         }
     }
     
@@ -483,6 +502,14 @@ public class Level5 extends Level {
 
     public Helicopter getHelicopter() {
         return this.helicopter;
+    }
+
+    public void setCreature(Creature creature) {
+        this.creature = creature;
+    }
+
+    public Creature getCreature() {
+        return this.creature;
     }
 
 }

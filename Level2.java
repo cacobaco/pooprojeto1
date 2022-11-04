@@ -10,11 +10,12 @@ public class Level2 extends Level {
     private Door buttonDoor; // null if open
     private Lever lever; // null if was pressed
     private Door leaveDoor; // null if open
+    private Creature creature;
 
     // constructor for debug
     public Level2() {
         super(800, 800);
-        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Creature.class, Player.class, GameObject.class);
         setBackground();
         addTimer(true);
         addImageObjects();
@@ -26,12 +27,13 @@ public class Level2 extends Level {
         spawnPlayer2(false);
         addStaminaBar1();
         addStaminaBar2();
+        spawnCreature();
         debug();
     }
     
     public Level2(Timer timer, Player player1, Player player2) {
         super(800, 800);
-        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Creature.class, Player.class, GameObject.class);
         setBackground();
         timer.setCount(false);
         addTimer(timer);
@@ -45,6 +47,8 @@ public class Level2 extends Level {
         spawnPlayer2(false, player2);
         addStaminaBar1();
         addStaminaBar2();
+        spawnCreature();
+        creature.freeze();
         freezePlayers();
     }
     
@@ -121,7 +125,7 @@ public class Level2 extends Level {
 
     // checks if timer <= 0
     public void checkGameOver() {
-        if (getTimer().getValue() <= 0) {
+        if (getPlayer1().isDead() && getPlayer2().isDead() || getTimer().getValue() <= 0) {
             gameOver();
         }
     }
@@ -130,6 +134,7 @@ public class Level2 extends Level {
     public void start() {
         removeJoinAnimation();
         unfreezePlayers();
+        creature.unfreeze();
         getTimer().setCount(true);
     }
 
@@ -287,6 +292,20 @@ public class Level2 extends Level {
         setBackground((buttonDoor == null) ? image4 : image3);
     }
 
+    // spawns the creature, if spawned
+    public void spawnCreature() {
+        if (creature != null) return;
+        creature = new Creature();
+        addObject(creature, 160, 165);
+    }
+
+    // despawns the creature, it not spawned
+    public void despawnCreature() {
+        if (creature == null) return;
+        removeObject(creature);
+        creature = null;
+    }
+
     // spawns player 1
     public void spawnPlayer1(boolean fromElevator) {
         if (fromElevator) {
@@ -402,6 +421,14 @@ public class Level2 extends Level {
     
     public Door getLeaveDoor() {
         return this.leaveDoor;
+    }
+
+    public void setCreature(Creature creature) {
+        this.creature = creature;
+    }
+
+    public Creature getCreature() {
+        return this.creature;
     }
 
 }

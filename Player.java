@@ -39,6 +39,7 @@ public class Player extends Actor {
     private int stamina;
     private Item holdingItem;
     private int pickupItemDelay;
+    private boolean dead; // can be revived tho
     
     public Player(String[] controls, GreenfootImage[] images) {
         this.controls = controls;
@@ -56,10 +57,11 @@ public class Player extends Actor {
 
     public void act() {
         holdingItemFollow();
-        if (!freeze) {
+        if (!freeze && !dead) {
             checkMovement();
             checkItemPickup();
             checkDropItem();
+            checkRevive();
         }
     }
 
@@ -159,6 +161,17 @@ public class Player extends Actor {
         }
     }
 
+    // checks if player is reviving
+    public void checkRevive() {
+        if (Greenfoot.isKeyDown(controls[4]) && isTouching(Player.class)) {
+            for (Player player : getIntersectingObjects(Player.class)) {
+                if (player != null && player.isDead()) {
+                    player.revive();
+                }
+            }
+        }
+    }
+
     // makes the holding item follow the player (above his head)
     public void holdingItemFollow() {
         if (holdingItem == null) return;
@@ -218,6 +231,11 @@ public class Player extends Actor {
         Greenfoot.playSound("break.mp3");
     }
 
+    // plays the died sound
+    public void playDiedSound() {
+        Greenfoot.playSound("oof.mp3");
+    }
+
     // freezes the player
     public void freeze() {
         this.freeze = true;
@@ -226,6 +244,22 @@ public class Player extends Actor {
     // unfreezes the player
     public void unfreeze() {
         this.freeze = false;
+    }
+
+    // kills the player
+    public void kill() {
+        imageStance = DEF_IMAGE_STANCE;
+        imageVariant = DEF_IMAGE_VARIANT;
+        setImage(images[imageStance * 4 + imageVariant]);
+        setRotation(90);
+        this.dead = true;
+        playDiedSound();
+    }
+
+    // revives the player
+    public void revive() {
+        setRotation(0);
+        this.dead = false;
     }
 
     // returns true if player is touching an object of the given type
@@ -340,6 +374,14 @@ public class Player extends Actor {
 
     public int getPickupItemDelay() {
         return this.pickupItemDelay;
+    }
+
+    public void setDead(boolean dead) {
+        this.dead = dead;
+    }
+
+    public boolean isDead() {
+        return this.dead;
     }
 
 }

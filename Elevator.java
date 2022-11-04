@@ -16,7 +16,7 @@ public class Elevator extends GameWorld {
     // constructor for debug
     public Elevator() {
         super(800, 800);
-        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Creature.class, Player.class, GameObject.class);
         setBackground();
         addTimer(false);
         addImageObjects();
@@ -31,7 +31,7 @@ public class Elevator extends GameWorld {
     
     public Elevator(Level currentLevel, Level nextLevel, Timer timer) {
         super(800, 800);
-        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Creature.class, Player.class, GameObject.class);
         this.currentLevel = currentLevel;
         this.nextLevel = nextLevel;
         setBackground();
@@ -49,7 +49,7 @@ public class Elevator extends GameWorld {
 
     public Elevator(Level currentLevel, Level nextLevel, Timer timer, Player player1, Player player2) {
         super(800, 800);
-        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Creature.class, Player.class, GameObject.class);
         this.currentLevel = currentLevel;
         this.nextLevel = nextLevel;
         setBackground();
@@ -152,7 +152,7 @@ public class Elevator extends GameWorld {
 
     // checks if timer <= 0
     public void checkGameOver() {
-        if (getTimer().getValue() <= 0) {
+        if (getPlayer1().isDead() && getPlayer2().isDead() || getTimer().getValue() <= 0) {
             gameOver();
         }
     }

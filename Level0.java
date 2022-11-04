@@ -8,7 +8,7 @@ public class Level0 extends Level {
 
     public Level0() {
         super(800, 800);
-        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Player.class, GameObject.class);
+        setPaintOrder(SwitchWorldAnimation.class, StaminaBar.class, Creature.class, Player.class, GameObject.class);
         setBackground();
         addImageObjects();
         addVehicles();
