@@ -229,25 +229,26 @@ public class Level5 extends Level {
     // adds invisible collidable objects for image objects (plants, decoration, etc)
     public void addImageObjects() {
         // walls
-        addObject(new CollidableObject(50, 800), 797, 328);
-        addObject(new CollidableObject(40, 800), 8, 394);
-        addObject(new CollidableObject(800, 30), 409, 783);
-        addObject(new CollidableObject(800, 20), 411, 19);
-        addObject(new CollidableObject(300, 50), 653, 29);
-        addObject(new CollidableObject(300, 50), 454, 396);
-        addObject(new CollidableObject(300, 50), 29, 396);
-        addObject(new CollidableObject(40, 400), 532, 208);
-        addObject(new CollidableObject(50, 50), 753, 395);
-       
+        addObject(new CollidableObject(40, 800), 18, 400); // wall left
+        addObject(new CollidableObject(800, 50), 400, 775); // wall down
+        addObject(new CollidableObject(40, 800), 788, 400); // wall and door right
+
+        addObject(new CollidableObject(250, 60), 663, 28); // wall button room top
+        addObject(new CollidableObject(50, 400), 534, 200); // wall button room left
+        addObject(new CollidableObject(315, 90), 456, 376); // wall button room down left
+        addObject(new CollidableObject(60, 90), 747, 376); // wall button room down right
+
+        addObject(new CollidableObject(200, 90), 97, 376); // wall leave room down left
+
         // poste
-        addObject(new CollidableObject(40,200), 726, 719);
+        addObject(new CollidableObject(100, 150), 750, 692);
     }
 
     // adds the box, if not added
     public void addBox() {
         if (box != null) return;
-        box = new Box(50, 50);
-        addObject(box, 742, 83);
+        box = new Box(60, 60);
+        addObject(box, 742, 86);
     }
 
     // removes the box, if added
@@ -259,7 +260,7 @@ public class Level5 extends Level {
 
     // adds non interactable box
     public void addUselessBox() {
-        addObject(new CollidableObject(50, 50), 742, 83);
+        addObject(new CollidableObject(60, 60), 742, 86);
     }
 
     // adds the lever, if not added
@@ -285,7 +286,7 @@ public class Level5 extends Level {
     public void addButtonDoor() {
         if (buttonDoor != null) return;
         buttonDoor = new Door(100, 50);
-        addObject(buttonDoor, 663, 395);
+        addObject(buttonDoor, 665, 396);
     }
 
     // removes the locker door, if added
@@ -319,7 +320,7 @@ public class Level5 extends Level {
     public void addLeaveDoor() {
         if (leaveDoor != null) return;
         leaveDoor = new Door(100, 50);
-        addObject(leaveDoor, 245, 395);
+        addObject(leaveDoor, 248, 396);
     }
 
     // removes the locker door, if added

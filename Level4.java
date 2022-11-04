@@ -276,13 +276,13 @@ public class Level4 extends Level {
         addObject(new CollidableObject(40, 330), 785, 635); // wall right up
         addObject(new CollidableObject(40, 330), 785, 165); // wall right down
 
-        addObject(new CollidableObject(400, 50), 190, 320); // wall top room down
-        addObject(new CollidableObject(50, 80), 367, 72); // wall top room right up
-        addObject(new CollidableObject(50, 80), 368, 256); // wall top room right down
+        addObject(new CollidableObject(400, 50), 202, 337); // wall top room down
+        addObject(new CollidableObject(50, 80), 377, 86); // wall top room right up
+        addObject(new CollidableObject(50, 150), 377, 279); // wall top room right down
 
-        addObject(new CollidableObject(400, 50), 190, 493); // wall bottom room up
-        addObject(new CollidableObject(50, 80), 368, 514); // wall bottom room right up
-        addObject(new CollidableObject(50, 80), 366, 720); // wall top room right down
+        addObject(new CollidableObject(400, 50), 202, 494); // wall bottom room up
+        addObject(new CollidableObject(50, 80), 377, 554); // wall bottom room right up
+        addObject(new CollidableObject(50, 150), 377, 747); // wall top room right down
     }
 
     // adds the top fake lever 1, if not added
@@ -383,7 +383,7 @@ public class Level4 extends Level {
     public void addTopDoor() {
         if (topDoor != null) return;
         topDoor = new Door(50, 80);
-        addObject(topDoor, 367, 157);   
+        addObject(topDoor, 377, 165);   
     }
 
     // removes the top door, if added
@@ -397,7 +397,7 @@ public class Level4 extends Level {
     public void addBottomDoor() {
         if (bottomDoor != null) return;
         bottomDoor = new Door(50, 80);
-        addObject(bottomDoor, 367, 609);
+        addObject(bottomDoor, 377, 633);
     }
     
     // removes the bottom door, if added
